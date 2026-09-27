@@ -159,6 +159,8 @@ p{margin-bottom:1rem;color:var(--body)}
   .nav-drop:hover .nav-drop-menu,.nav-drop:focus-within .nav-drop-menu,.nav-drop.open .nav-drop-menu{
     opacity:1;transform:translateX(-50%) translateY(0) scale(1);pointer-events:auto;
   }
+  /* while scrolling, suppress hover-opened menus so they don't look stuck */
+  body.no-hover .nav-drop:hover .nav-drop-menu{opacity:0;pointer-events:none}
   .nav-drop--inline:hover .nav-drop-menu,.nav-drop--inline:focus-within .nav-drop-menu,.nav-drop--inline.open .nav-drop-menu{
     transform:translateY(0) scale(1);
   }
@@ -222,11 +224,19 @@ p{margin-bottom:1rem;color:var(--body)}
   .brand-text strong{font-size:.86rem}
   .header-inner{gap:1rem}
 }
-/* snug inline nav on smaller desktop widths */
-@media(min-width:1281px) and (max-width:1420px){
+/* snug inline nav on desktop so brand + nav + Apply always fit */
+@media(min-width:1281px){
   .header-inner{gap:1.25rem}
   .navbar-inner{gap:1.15rem}
   .navbar a,.nav-drop-btn{font-size:.86rem}
+}
+/* extra-snug for narrow desktop widths where the full nav barely fits */
+@media(min-width:1281px) and (max-width:1400px){
+  .header-inner{gap:1rem}
+  .navbar-inner{gap:.85rem}
+  .navbar a,.nav-drop-btn{font-size:.8rem}
+  .brand-text strong{font-size:.9rem}
+  .brand-logo{height:46px}
 }
 
 /* ---------- views / router ---------- */
@@ -333,7 +343,7 @@ p{margin-bottom:1rem;color:var(--body)}
 @media(max-width:880px){.split{grid-template-columns:1fr;gap:2.4rem}.section{padding:4rem 0}.logo-card{aspect-ratio:2/1;padding:2.2rem}.logo-card img{max-height:170px}}
 
 /* ---------- stats: overlapping card ---------- */
-.stats-band{position:relative;z-index:2;margin-top:-3.4rem;padding-bottom:1rem}
+.stats-band{position:relative;z-index:2;margin-top:2.2rem;padding-bottom:1rem}
 .stats-grid{
   display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;background:#fff;border-radius:var(--radius-lg);
   box-shadow:var(--shadow-lg);padding:2.4rem 2rem;
