@@ -134,8 +134,18 @@
 
   /* ---------- header shadow ---------- */
   var header = document.getElementById("siteHeader");
+  var fineHover = window.matchMedia("(hover:hover) and (pointer:fine)");
   window.addEventListener("scroll", function () {
     header.classList.toggle("scrolled", window.scrollY > 8);
+    /* A hover-opened desktop dropdown would otherwise stay stuck open while
+       the page scrolls under it (no mouseleave fires during scroll), so
+       suppress hover menus until the mouse actually moves again. */
+    if (fineHover.matches && window.innerWidth > 1280) {
+      document.body.classList.add("no-hover");
+    }
+  }, { passive: true });
+  window.addEventListener("mousemove", function () {
+    document.body.classList.remove("no-hover");
   }, { passive: true });
 
   /* ---------- reveal on scroll ---------- */
