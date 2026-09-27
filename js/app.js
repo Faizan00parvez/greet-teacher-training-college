@@ -108,36 +108,75 @@
     if (e.target.closest("a")) closeMenu();
   });
 
-  /* ---------- nav dropdowns ---------- */
+  /* ---------- nav dropdowns: hover-only on desktop, tap-toggle on touch ---------- */
   var fineHover = window.matchMedia("(hover:hover) and (pointer:fine)");
+  function desktopHover() { return window.innerWidth > 1280 && fineHover.matches; }
+  function pointInTriangle(px, py, ax, ay, bx, by, cx, cy) {
+    var d = (by - cy) * (ax - cx) + (cx - bx) * (ay - cy);
+    if (!d) return false;
+    var l1 = ((by - cy) * (px - cx) + (cx - bx) * (py - cy)) / d;
+    var l2 = ((cy - ay) * (px - cx) + (ax - cx) * (py - cy)) / d;
+    return l1 >= 0 && l2 >= 0 && (1 - l1 - l2) >= 0;
+  }
   function closeDrops() {
-    Array.prototype.slice.call(document.querySelectorAll(".nav-drop.open, .nav-drop.hover-lock")).forEach(function (d) {
-      d.classList.remove("open", "hover-lock");
+    Array.prototype.slice.call(document.querySelectorAll(".nav-drop.open, .nav-drop.hover-lock, .nav-drop.grace")).forEach(function (d) {
+      d.classList.remove("open", "hover-lock", "grace");
       var b = d.querySelector(".nav-drop-btn");
       if (b) b.setAttribute("aria-expanded", "false");
     });
   }
   Array.prototype.slice.call(document.querySelectorAll(".nav-drop")).forEach(function (drop) {
     var btn = drop.querySelector(".nav-drop-btn");
-    if (!btn) return;
+    var menu = drop.querySelector(".nav-drop-menu");
+    if (!btn || !menu) return;
+    /* Clicks: on desktop-hover the menu is hover-only, so mouse clicks on the
+       button are ignored (keyboard Enter/Space still toggles for a11y).
+       On touch/mobile the tap toggles the accordion as before. */
     btn.addEventListener("click", function (e) {
+      if (desktopHover() && e.detail !== 0) return;
       e.stopPropagation();
-      var hovering = window.innerWidth > 1280 && fineHover.matches && drop.matches(":hover");
-      /* Effectively open = toggled open, or hover-open and not click-locked shut. */
-      var isOpen = drop.classList.contains("open") || (hovering && !drop.classList.contains("hover-lock"));
+      var isOpen = drop.classList.contains("open");
       closeDrops();
       if (!isOpen) {
         drop.classList.add("open");
         btn.setAttribute("aria-expanded", "true");
-      } else if (hovering) {
-        /* Closed by click while the cursor is still hovering: lock hover-open
-           until the mouse leaves, otherwise :hover reopens it instantly and
-           the toggle looks stuck. */
-        drop.classList.add("hover-lock");
       }
     });
-    drop.addEventListener("mouseleave", function () {
+    /* Safe-triangle grace: when the cursor leaves the dropdown, keep the menu
+       alive while it travels toward the menu/button (diagonal moves across the
+       gap), and deactivate it the moment it veers elsewhere. */
+    var graceTimer = null;
+    function onGraceMove(ev) {
+      if (drop.matches(":hover")) { endGrace(false); return; } /* back inside: CSS resumes */
+      var t = drop._tri;
+      if (t && pointInTriangle(ev.clientX, ev.clientY, t[0], t[1], t[2], t[3], t[4], t[5])) return;
+      endGrace(true); /* veered away: deactivate */
+    }
+    function endGrace(lockIt) {
+      if (graceTimer) { clearTimeout(graceTimer); graceTimer = null; }
+      document.removeEventListener("mousemove", onGraceMove);
+      drop.classList.remove("grace");
+      drop._tri = null;
+      if (lockIt) drop.classList.add("hover-lock");
+    }
+    drop.addEventListener("mouseenter", function () {
+      if (!desktopHover()) return;
+      endGrace(false);
       drop.classList.remove("hover-lock");
+    });
+    drop.addEventListener("mouseleave", function (e) {
+      var wasLocked = drop.classList.contains("hover-lock");
+      drop.classList.remove("hover-lock");
+      if (!desktopHover() || wasLocked) return;
+      var btnR = btn.getBoundingClientRect();
+      var menuR = menu.getBoundingClientRect();
+      var sx = e.clientX, sy = e.clientY, ax, ay, bx, by;
+      if (sy < menuR.top) { ax = menuR.left; ay = menuR.top; bx = menuR.right; by = menuR.top; }
+      else { ax = btnR.left; ay = btnR.bottom; bx = btnR.right; by = btnR.bottom; }
+      drop._tri = [sx, sy, ax, ay, bx, by];
+      drop.classList.add("grace");
+      graceTimer = setTimeout(function () { endGrace(true); }, 500);
+      document.addEventListener("mousemove", onGraceMove);
     });
   });
   document.addEventListener("click", function (e) {
@@ -150,8 +189,7 @@
     header.classList.toggle("scrolled", window.scrollY > 8);
     /* A hover-opened desktop dropdown would otherwise stay stuck open while
        the page scrolls under it (no mouseleave fires during scroll), so
-       truly deactivate it: lock it shut until the mouse leaves the area.
-       (A click-toggled .open menu is left alone — the user chose that.) */
+       truly deactivate it: lock it shut until the mouse leaves the area. */
     if (fineHover.matches && window.innerWidth > 1280) {
       Array.prototype.slice.call(document.querySelectorAll(".nav-drop")).forEach(function (d) {
         if (d.matches(":hover") && !d.classList.contains("open") && !d.classList.contains("hover-lock")) {
