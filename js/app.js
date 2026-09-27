@@ -150,13 +150,15 @@
     header.classList.toggle("scrolled", window.scrollY > 8);
     /* A hover-opened desktop dropdown would otherwise stay stuck open while
        the page scrolls under it (no mouseleave fires during scroll), so
-       suppress hover menus until the mouse actually moves again. */
+       truly deactivate it: lock it shut until the mouse leaves the area.
+       (A click-toggled .open menu is left alone — the user chose that.) */
     if (fineHover.matches && window.innerWidth > 1280) {
-      document.body.classList.add("no-hover");
+      Array.prototype.slice.call(document.querySelectorAll(".nav-drop")).forEach(function (d) {
+        if (d.matches(":hover") && !d.classList.contains("open") && !d.classList.contains("hover-lock")) {
+          d.classList.add("hover-lock");
+        }
+      });
     }
-  }, { passive: true });
-  window.addEventListener("mousemove", function () {
-    document.body.classList.remove("no-hover");
   }, { passive: true });
 
   /* ---------- reveal on scroll ---------- */
