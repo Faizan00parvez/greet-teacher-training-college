@@ -108,24 +108,36 @@
     if (e.target.closest("a")) closeMenu();
   });
 
-  /* ---------- "Our Colleges" dropdowns ---------- */
+  /* ---------- nav dropdowns ---------- */
+  var fineHover = window.matchMedia("(hover:hover) and (pointer:fine)");
   function closeDrops() {
-    Array.prototype.slice.call(document.querySelectorAll(".nav-drop.open")).forEach(function (d) {
-      d.classList.remove("open");
+    Array.prototype.slice.call(document.querySelectorAll(".nav-drop.open, .nav-drop.hover-lock")).forEach(function (d) {
+      d.classList.remove("open", "hover-lock");
       var b = d.querySelector(".nav-drop-btn");
       if (b) b.setAttribute("aria-expanded", "false");
     });
   }
-  Array.prototype.slice.call(document.querySelectorAll(".nav-drop-btn")).forEach(function (btn) {
+  Array.prototype.slice.call(document.querySelectorAll(".nav-drop")).forEach(function (drop) {
+    var btn = drop.querySelector(".nav-drop-btn");
+    if (!btn) return;
     btn.addEventListener("click", function (e) {
       e.stopPropagation();
-      var drop = btn.closest(".nav-drop");
-      var wasOpen = drop.classList.contains("open");
+      var hovering = window.innerWidth > 1280 && fineHover.matches && drop.matches(":hover");
+      /* Effectively open = toggled open, or hover-open and not click-locked shut. */
+      var isOpen = drop.classList.contains("open") || (hovering && !drop.classList.contains("hover-lock"));
       closeDrops();
-      if (!wasOpen) {
+      if (!isOpen) {
         drop.classList.add("open");
         btn.setAttribute("aria-expanded", "true");
+      } else if (hovering) {
+        /* Closed by click while the cursor is still hovering: lock hover-open
+           until the mouse leaves, otherwise :hover reopens it instantly and
+           the toggle looks stuck. */
+        drop.classList.add("hover-lock");
       }
+    });
+    drop.addEventListener("mouseleave", function () {
+      drop.classList.remove("hover-lock");
     });
   });
   document.addEventListener("click", function (e) {
@@ -134,7 +146,6 @@
 
   /* ---------- header shadow ---------- */
   var header = document.getElementById("siteHeader");
-  var fineHover = window.matchMedia("(hover:hover) and (pointer:fine)");
   window.addEventListener("scroll", function () {
     header.classList.toggle("scrolled", window.scrollY > 8);
     /* A hover-opened desktop dropdown would otherwise stay stuck open while
