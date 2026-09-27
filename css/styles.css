@@ -159,9 +159,7 @@ p{margin-bottom:1rem;color:var(--body)}
   .nav-drop:hover .nav-drop-menu,.nav-drop:focus-within .nav-drop-menu,.nav-drop.open .nav-drop-menu{
     opacity:1;transform:translateX(-50%) translateY(0) scale(1);pointer-events:auto;
   }
-  /* while scrolling, suppress hover-opened menus so they don't look stuck */
-  body.no-hover .nav-drop:hover .nav-drop-menu{opacity:0;pointer-events:none}
-  /* after click-closing while still hovering, keep it shut until the mouse leaves */
+  /* deactivated (after scroll or click-close while hovering): stays shut until the mouse leaves */
   .nav-drop.hover-lock:hover .nav-drop-menu{opacity:0;pointer-events:none}
   .nav-drop--inline:hover .nav-drop-menu,.nav-drop--inline:focus-within .nav-drop-menu,.nav-drop--inline.open .nav-drop-menu{
     transform:translateY(0) scale(1);
