@@ -577,3 +577,29 @@ p{margin-bottom:1rem;color:var(--body)}
   .site-header{background:#fff}
   .navbar{background:var(--paper)}
 }
+
+/* ---------- counselling portals ---------- */
+.portal-block{margin-bottom:1.8rem}
+.portal-block .eyebrow{margin-bottom:.5rem}
+.portal-block h2{font-family:var(--font-display);font-size:clamp(1.75rem,3.4vw,2.5rem);letter-spacing:-.02em;margin:0 0 .6rem;color:var(--navy)}
+.portal-lead{color:var(--muted);max-width:660px;margin:0 0 1.6rem;font-size:1.02rem;line-height:1.65}
+.portal-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.4rem}
+.portal-card{background:#fff;border-radius:var(--radius-lg);padding:2.2rem;box-shadow:var(--shadow-md);border-top:4px solid var(--orange);display:flex;flex-direction:column;gap:.7rem;transition:transform 220ms var(--ease-out),box-shadow 220ms ease}
+@media (hover:hover) and (pointer:fine){.portal-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}}
+.portal-card .portal-kicker{font-family:var(--font-display);font-size:.82rem;font-weight:800;color:var(--orange);letter-spacing:.14em;text-transform:uppercase}
+.portal-card h3{font-family:var(--font-display);font-size:1.35rem;letter-spacing:-.015em;margin:0;color:var(--navy)}
+.portal-card p{margin:0;color:var(--body);font-size:.96rem;line-height:1.65;flex:1}
+.portal-card .btn{align-self:flex-start;margin-top:.8rem}
+.portal-card .btn svg{margin-left:.5rem;vertical-align:-1px}
+@media(max-width:760px){.portal-grid{grid-template-columns:1fr}.portal-card{padding:1.8rem}}
+
+/* mobile menu: counselling portals quick-access card (hidden on desktop) */
+.nav-portals{display:none}
+@media(max-width:1280px){
+  .navbar .nav-portals{display:block;margin-top:1.6rem;background:var(--navy);border-radius:var(--radius-lg);padding:1.5rem 1.6rem;position:relative;overflow:hidden}
+  .navbar .nav-portals::after{content:"";position:absolute;top:-70px;right:-50px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(210,94,26,.45),transparent 65%);pointer-events:none}
+  .navbar .nav-portals p{position:relative;color:#fff;font-family:var(--font-display);font-weight:800;font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;margin:0 0 .7rem}
+  .navbar .nav-portals a{position:relative;display:flex;align-items:center;justify-content:space-between;gap:1rem;font-family:var(--font-body);font-size:1rem;font-weight:600;color:#fff;text-decoration:none;padding:.9rem 0;border-top:1px solid rgba(255,255,255,.16)}
+  .navbar .nav-portals a:first-of-type{border-top:0}
+  .navbar .nav-portals a svg{flex:none;color:var(--peach)}
+}
