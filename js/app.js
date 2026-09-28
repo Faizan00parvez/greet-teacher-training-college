@@ -65,6 +65,51 @@
   var views = Array.prototype.slice.call(document.querySelectorAll(".view"));
   var navLinks = Array.prototype.slice.call(document.querySelectorAll(".navbar a[data-route]"));
 
+  /* ---------- per-route SEO: title + meta description ---------- */
+  var SITE = "Greet Teacher Training College";
+  var ROUTE_META = {
+    "":                  { t: SITE + " | B.Ed & D.El.Ed in Rajdhanwar, Giridih, Jharkhand",
+                           d: "Greet Teacher Training College, Pachrukhi (Rajdhanwar, Giridih) — NCTE-recognised B.Ed and D.El.Ed programmes affiliated to Vinoba Bhave University, Hazaribag and Jharkhand Academic Council, Ranchi. Empowering educators since 2007." },
+    "about":             { t: "About Us | " + SITE + ", Giridih",
+                           d: "About Greet Teacher Training College, Pachrukhi (Rajdhanwar, Giridih, Jharkhand) — established 2007 by the Gulam Roshan Education Empowerment Trust to train the next generation of teachers." },
+    "about-mission":     { t: "Mission & Vision | " + SITE,
+                           d: "Our mission: quality teacher education at an affordable cost — B.Ed and D.El.Ed programmes shaping confident, employable educators for Jharkhand and beyond." },
+    "about-achievements":{ t: "Achievements | " + SITE,
+                           d: "Milestones of Greet Teacher Training College, Rajdhanwar (Giridih) — NCTE recognition, university affiliations and a decade of teacher-training excellence." },
+    "about-faculties":   { t: "Our Faculties | " + SITE,
+                           d: "Meet the experienced teaching and non-teaching faculty of Greet Teacher Training College — B.Ed and D.El.Ed educators at Pachrukhi, Giridih, Jharkhand." },
+    "about-infrastructure": { t: "Infrastructure & Facilities | " + SITE,
+                           d: "1.6-acre Wi-Fi campus at Pachrukhi, Rajdhanwar (Giridih): 20 classrooms, laboratories, computer centre, library, auditorium and hostels." },
+    "disclosures":       { t: "Mandatory Disclosures | " + SITE,
+                           d: "Mandatory disclosures of Greet Teacher Training College — affiliation, NCTE recognition, approvals, land affidavit and 12A documents." },
+    "disclosure-affiliation": { t: "Affiliation — VBU & JAC | " + SITE,
+                           d: "Affiliation documents: Greet Teacher Training College is affiliated to Vinoba Bhave University, Hazaribag (B.Ed) and Jharkhand Academic Council, Ranchi (D.El.Ed)." },
+    "disclosure-recognition": { t: "NCTE Recognition | " + SITE,
+                           d: "NCTE recognition letters for the B.Ed and D.El.Ed programmes of Greet Teacher Training College, Giridih, Jharkhand." },
+    "disclosure-approvals": { t: "Approvals | " + SITE,
+                           d: "Statutory approvals of Greet Teacher Training College, Rajdhanwar (Giridih, Jharkhand)." },
+    "disclosure-land-affidavit": { t: "Land Affidavit | " + SITE,
+                           d: "Land affidavit of Greet Teacher Training College — campus land at Pachrukhi, Dhanwar, Giridih, Jharkhand." },
+    "disclosure-qci":    { t: "QCI Report | " + SITE,
+                           d: "QCI report — request the document from Greet Teacher Training College, Rajdhanwar (Giridih, Jharkhand)." },
+    "courses":           { t: "B.Ed & D.El.Ed Courses | " + SITE + ", Jharkhand",
+                           d: "B.Ed and D.El.Ed courses at Greet Teacher Training College, Pachrukhi (Rajdhanwar, Giridih, Jharkhand) — 2-year NCTE-recognised programmes. Apply via JCECEB counselling." },
+    "gallery":           { t: "Gallery | " + SITE,
+                           d: "Campus gallery of Greet Teacher Training College, Pachrukhi (Rajdhanwar, Giridih, Jharkhand)." },
+    "contact":           { t: "Contact Us | " + SITE + ", Giridih",
+                           d: "Contact Greet Teacher Training College — Railway Station Road, Dhanwar, Pachrukhi, Rajdhanwar, Giridih, Jharkhand 825412. Call 8409 923 795." }
+  };
+  function setRouteMeta(r) {
+    var m = ROUTE_META[r] || ROUTE_META[""];
+    document.title = m.t;
+    var md = document.querySelector('meta[name="description"]');
+    if (md) md.setAttribute("content", m.d);
+    var ogt = document.querySelector('meta[property="og:title"]');
+    if (ogt) ogt.setAttribute("content", m.t);
+    var ogd = document.querySelector('meta[property="og:description"]');
+    if (ogd) ogd.setAttribute("content", m.d);
+  }
+
   function currentRoute() {
     var h = window.location.hash.replace(/^#\/?/, "").replace(/\/$/, "");
     return routes.indexOf(h) === -1 ? "" : h;
@@ -86,6 +131,7 @@
     });
     closeMenu();
     window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
+    setRouteMeta(r);
     requestAnimationFrame(observeReveals);
   }
   window.addEventListener("hashchange", render);
