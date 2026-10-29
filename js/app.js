@@ -136,6 +136,17 @@
   }
   window.addEventListener("hashchange", render);
 
+  /* logo / Home link: when already on the home view the hash does not change,
+     so no hashchange fires — scroll to the top manually, like a fresh page load */
+  Array.prototype.slice.call(document.querySelectorAll(".brand, .navbar a[data-route='']")).forEach(function (el) {
+    el.addEventListener("click", function () {
+      if (currentRoute() === "") {
+        closeMenu();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    });
+  });
+
   /* ---------- mobile menu ---------- */
   var toggle = document.getElementById("menuToggle");
   var nav = document.getElementById("mainNav");
