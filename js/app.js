@@ -132,6 +132,10 @@
     closeMenu();
     window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
     setRouteMeta(r);
+    /* GA4: the SPA config has send_page_view off, so report each view here */
+    if (window.gtag) {
+      try { gtag("event", "page_view", { page_path: "/" + (r ? r + "/" : ""), page_title: document.title }); } catch (e) {}
+    }
     requestAnimationFrame(observeReveals);
   }
   window.addEventListener("hashchange", render);
